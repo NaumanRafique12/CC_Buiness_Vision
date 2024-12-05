@@ -1,0 +1,9 @@
+statistical_features:
+  correlation_threshold: 0.8
+
+data_splitting:
+  test_size: 0.2
+
+model_training:
+  max_depth: 10000
+  min_samples_split: 2

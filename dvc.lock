@@ -1,0 +1,107 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python3 src/data/data_ingestion.py
+    deps:
+    - path: src/data/data_ingestion.py
+      hash: md5
+      md5: 00d7824a71f12f80f207f6516d0a23bc
+      size: 1014
+    outs:
+    - path: data/cleaned_data
+      hash: md5
+      md5: 5eb657661531d080219821c625be4602.dir
+      size: 68661485
+      nfiles: 2
+  feature_engineering:
+    cmd: python3 src/features/feature_engineering.py
+    deps:
+    - path: data/cleaned_data
+      hash: md5
+      md5: 5eb657661531d080219821c625be4602.dir
+      size: 68661485
+      nfiles: 2
+    - path: src/features/feature_engineering.py
+      hash: md5
+      md5: bb819dfc464f111d9990504e934fb439
+      size: 5208
+    outs:
+    - path: data/Featured_data
+      hash: md5
+      md5: 57c1ea908109493d60731d40c354c313.dir
+      size: 103613408
+      nfiles: 1
+  statistical_features:
+    cmd: python3 src/features/statistical_features.py
+    deps:
+    - path: data/Featured_data
+      hash: md5
+      md5: 57c1ea908109493d60731d40c354c313.dir
+      size: 103613408
+      nfiles: 1
+    - path: src/features/statistical_features.py
+      hash: md5
+      md5: c00b025f5c78847aff32de1818c880c7
+      size: 5193
+    params:
+      params.yaml:
+        statistical_features.correlation_threshold: 0.8
+    outs:
+    - path: data/Final
+      hash: md5
+      md5: ff7f7b1c68e68cea92258526a62ade51.dir
+      size: 56298646
+      nfiles: 1
+  data_splitting:
+    cmd: python3 src/data/data_splitting.py
+    deps:
+    - path: data/Final
+      hash: md5
+      md5: ff7f7b1c68e68cea92258526a62ade51.dir
+      size: 56298646
+      nfiles: 1
+    - path: src/data/data_splitting.py
+      hash: md5
+      md5: a78b24aad453195c7a9474eb4c7b9a53
+      size: 3409
+    params:
+      params.yaml:
+        data_splitting.test_size: 0.2
+    outs:
+    - path: data/Split_Data/test
+      hash: md5
+      md5: f6af9f450d769e8e439277d912a12dbf.dir
+      size: 10026281
+      nfiles: 1
+    - path: data/Split_Data/train
+      hash: md5
+      md5: a7635ee98e8d27c430a1b964a4f82e3e.dir
+      size: 40099473
+      nfiles: 1
+  model_training:
+    cmd: python3 src/model/model_training.py
+    deps:
+    - path: data/Split_Data/test
+      hash: md5
+      md5: f6af9f450d769e8e439277d912a12dbf.dir
+      size: 10026281
+      nfiles: 1
+    - path: data/Split_Data/train
+      hash: md5
+      md5: a7635ee98e8d27c430a1b964a4f82e3e.dir
+      size: 40099473
+      nfiles: 1
+    - path: src/model/model_training.py
+      hash: md5
+      md5: 198413b6096314102f4801e1e9753d43
+      size: 6735
+    params:
+      params.yaml:
+        model_training.max_depth: 10000
+        model_training.min_samples_split: 2
+    outs:
+    - path: Metrics
+      hash: md5
+      md5: 1dddea5a2eb4897a3f4c310889d3ff81.dir
+      size: 139
+      nfiles: 1
